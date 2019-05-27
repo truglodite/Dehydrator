@@ -1,9 +1,12 @@
+/////////////////////////////////////////////////////////////////
 // Dehydrator.ino
-// by: Kevin Beras
+// by: Truglodite
 // updated: 5-25-2019
 //
 // A simple Arduino bang bang relay controller for a food dehydrator.
+//
 // All user customizible settings are in configuration.h.
+/////////////////////////////////////////////////////////////////
 
 //#include <EEPROM.h>
 #include <OneWire.h>

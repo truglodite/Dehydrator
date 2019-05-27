@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////
 // configuration.h
-// by: Kevin Beras
+// by: Truglodite
 // updated: 5-25-2019
 //
 // User configuration for Dehydrator.ino.
