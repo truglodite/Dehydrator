@@ -33,7 +33,7 @@ During bootup, if select is held until the splash screen, the code will enter te
 ## Notes
 Since DHT sensors are prone to errors, this code implements an "NAN" value check on the dht sensor readings. By default if more than 5 consecutive NAN's are read, the code will soft reset.
 
-### Warning: Line Voltage Work Required
+### Warning: Mains Voltage Work Required
 Hacking a dehydrator requires you to be familiar with best practices while working around and designing high voltage devices. As such, this is not a suitable build for a non-skilled electrician. It is recommended that you wire your relays like this:
 ```
                             ----[heater relay]----[heater]----
