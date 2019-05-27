@@ -35,9 +35,9 @@ Since DHT sensors are prone to errors, this code implements an "NAN" value check
 
 ### Warning: Line Voltage Work Required
 Hacking a dehydrator requires you to be familiar with best practices while working around and designing high voltage devices. As such, this is not a suitable build for a non-skilled electrician. It is recommended that you wire your relays like this:
-
+```
                             ----[heater relay]----[heater]----
                            |                                  |
   [LINE]----[fan relay]----|-------------[fan]----------------|----[NEUTRAL]
-
+```
 This way the fan relay must be activated for the heater to work, regardless of the combination signals coming from the Arduino board. Regardless how it is wired, you assume all liabilities by with building and operating this device... ie if you burn your house down or electrocute yourself by building and/or operating a dehydrator, you're on your own. ;)
