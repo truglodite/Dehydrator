@@ -1,6 +1,6 @@
 # Dehydrator
+An adjustable precision bang bang relay controller for food dehydrators, with 3 button LCD interface, separate fan relay control, time/temp tables, and drying/holding modes.
 <img src="https://cdn.thingiverse.com/renders/fa/e7/e0/af/d5/63c64e5bdb93b1421403e6982178a298_preview_featured.jpg" width="900">
-A bang bang relay controller for food dehydrators, with 3 button LCD interface, separate fan relay control, time/temp tables, and drying/holding modes.
 
 ## 3D Printed Controller & Relay Enclosures
 - *Presto 6302*: https://www.thingiverse.com/thing:2853628
