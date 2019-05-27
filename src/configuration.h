@@ -57,7 +57,7 @@
 //  **Add to filamentCount if you add new stuff.
 //  **New stuff needs both data and a name.
 //
-//data format:  {drying celsius,drying hours,holding celsius,holding humidity %},
+//data format: {drying celsius,drying hours,holding celsius,holding humidity %},
 #define filamentCount 10  //# of filaments in the tables below
 double filamentData[filamentCount][4]= {
   {45,4,35,10},  //0- PLA
