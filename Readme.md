@@ -14,6 +14,7 @@ An Arduino based adjustable precision bang bang relay controller for food dehydr
 - Adjustable temperature hysteresis for heating mode
 - Heater "ON" LED indicator
 - Displays temp, set temp, humidity, and heater duty cycle % in dry and hold modes
+- Obeys minimum switching times
 
 ## Hardware Used:
 - Arduino pro mini (or similar m328p)
@@ -45,10 +46,12 @@ During bootup, if select is held until the splash screen, the code will enter te
 ## Notes
 Since DHT sensors are prone to errors, this code implements an "NAN" value check on the dht sensor readings. By default if more than 5 consecutive NAN's are read, the code will soft reset.
 
-### Warning: Mains Voltage Work Required!!!
+* Warning: Mains Voltage Work Required!!! *
+
 Hacking a dehydrator requires you to be familiar with best practices while working around and designing high voltage devices. As such, this is not a suitable build for a non-skilled electrician... ie if you burn your house down or electrocute yourself by building and/or operating a dehydrator, you're on your own. ;)
 
-### HV wiring
+* HV wiring *
+
 It is recommended that you wire your high voltage lines like this:
 ```
                                        --[heater relay]--[heater]--
@@ -61,5 +64,6 @@ Wired this way, the fan relay must be activated for the heater to work. This is 
 
 Most appliances with mains powered heating elements have a thermal fuse installed near the heating element. It is typically located and wired in a way that minimizes live wire length inside the device after it opens (short wire run indicated by the single "-"). For obvious safety reasons, do not bypass the fuse, and avoid increasing the length of 'hot wire' leading to it. Also, do not use solder on the thermal fuse, or anywhere near the heated areas of the appliance.
 
-### RC snubber
+* RC snubber *
+
 For the Presto brand dehydrator used by the author of this code, motor off switching transients resulted in occasional 'phantom button press' when the fan shut off. The behavior was verified with an o-scope, and appropriate solution was added and tested; a 0.1uF+100ohm RC snubber in parallel to the motor wires. For safety, it is preferable to use a purpose built glass passivated paper impregnated snubber device, like Kemet# PMR209MC6100M100 or similar. Install it as close to the motor as reasonably possible. Accessing the motor on the author's Presto brand dehydrator was impossible without first removing the impeller, and likely destroying it in the process. Instead, connecting the snubber in the relay/junction box (terminating between the fan relay and thermal fuse instead) was good enough to fix the problem.

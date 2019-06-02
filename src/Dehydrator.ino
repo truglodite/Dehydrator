@@ -19,50 +19,49 @@
 #include "configuration.h"
 
 //(more) global vars///////////////////////////////////////////////
-unsigned long currentMillis = debounce + 1; //make sure we read boot buttons
-unsigned long dallasReadTime = 0; //store time when last temp read was sent
-unsigned long dhtReadTime = 0; //store time when last temp read was sent
-unsigned long lastDisplayTime = 0; //store time when last display update was sent
-unsigned long lastButton = 0; //debouncing & repeat time storage
-unsigned long heaterOffTime = 0; //holder for min switch timer and heater fan timer
-unsigned long heaterOnTime = 0;  //holder for min switch timer
+unsigned long currentMillis = debounce + 1; // make sure we read boot buttons
+unsigned long dallasReadTime = 0; // store time when last temp read was sent
+unsigned long dhtReadTime = 0; // store time when last temp read was sent
+unsigned long lastDisplayTime = 0; // store time when last display update was sent
+unsigned long lastButton = 0; // holder for debounce & repeating timer
+unsigned long heaterOffTime = 0; // holder for min switch timer and fan timer
+unsigned long heaterOnTime = 0;  // holder for min switch timer
 unsigned long dryStartTime = 0;
-unsigned long filamentMillis = defaultDryTime * 3600000;  //time to dry
-int dallasState = 0;  //temperature state machine case
-byte mode = 4; //flag for mode: 0=dry, 1=hold, 2=filament select, 3=hysterisis, 4=off (default 4, boot to off mode)
+unsigned long filamentMillis = defaultDryTime * 3600000;  // time to dry
+int dallasState = 0;  // temperature state machine case
+byte mode = 4; // flag for mode: 0=dry, 1=hold, 2=filament select, 3=hysterisis, 4=off (default 4, boot to off mode)
 #ifdef dallasSensorEnabled
-  double tempArray[dallasBufferSize] = {};  //array to store temperature readings
-  int i = 0;    //temperature buffer index
+  double tempArray[dallasBufferSize] = {};  // array to store temperature readings
+  int i = 0;    // temperature buffer index
 #endif
 #ifndef dallasSensorEnabled
-  double tempArray[dhtBufferSize] = {};  //array to store temperature readings
+  double tempArray[dhtBufferSize] = {};  // array to store temperature readings
 #endif
 double tempAverage = 22.0;
 double tempDesired = defaultTemp;
 double tempHolding = defaultTempHolding;
 int dhtRetries = 0;
 double dhtArray[dhtBufferSize] = {};
-int j = 0;    //humidity buffer index
+int j = 0;    // humidity buffer index
 double humidAverage = 20.0;
 double humidDesired = defaultHumid;
 bool fanStatus = true;
 bool heaterStatus = false;
 bool dryingFlag = false;
 bool bootup = true;
-int currentFilament = 4;  //we'll bootup with dessicant
+int currentFilament = 4;  // default bootup with filament 4 (dessicant)
 double heaterPercent = 0.0;
 double tempHysteresis = tempHysteresisDefault;
 
-//dallas sensor
+// dallas sensor
 #ifdef dallasSensorEnabled
   OneWire oneWire(dallasPin);
   DallasTemperature dallas(&oneWire);
   DeviceAddress dallasAddress;
 #endif
-//dht sensor
-DHT dht(dhtPin,dhtType);
-//i2c display
-LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);//Banggood blue 20x4 i2c display... or 0x27
+
+DHT dht(dhtPin,dhtType);  // dht sensor
+LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE); // Banggood blue 20x4 i2c display... or 0x27
 
 void setup() {
   //pins
@@ -70,7 +69,7 @@ void setup() {
   pinMode(upPin,INPUT_PULLUP);           //...   up button w/ pull-up
   pinMode(downPin,INPUT_PULLUP);         //...   down button w/pull-up
   pinMode(heaterPin,OUTPUT);             //...   heater signal
-  pinMode(fanPin,OUTPUT);                //...   heater fan signal
+  pinMode(fanPin,OUTPUT);                //...   fan signal
   pinMode(ledPin,OUTPUT);                //...   LED indicator
 
   //safely init the outputs
@@ -113,10 +112,10 @@ void loop() {
   #endif
   readDHT();
 
-  // control heater output, depending on mode
+  // control heater, fan, and LED output based on mode and sensors
   switch(mode)  {
 
-    // drying mode (constant fan, fixed temp, for X time)
+    // drying mode (constant fan, fixed temp, for X time) /////////////////////
     case 0:  {
       if(!dryingFlag)  {  // just started drying...
         dryStartTime = currentMillis;  //start dry timer
@@ -150,10 +149,10 @@ void loop() {
       break;
     }
 
-    // holding mode (fixed humidity)
+    // holding mode (fixed humidity) ///////////////////////////////////////////
     case 1: {
       if(!heaterStatus && humidAverage >= humidDesired + humidHysteresis && currentMillis - heaterOffTime > heaterMinSwitchTime && tempAverage < tempHolding - tempHysteresis ) {
-        // off, too much humidity, have been off long enough, and not too hot
+        // heater off, too much humidity, have been off long enough, and not too hot
         heaterStatus = true;  // heater on
         digitalWrite(heaterPin, HIGH);
         digitalWrite(ledPin, HIGH);
@@ -163,7 +162,7 @@ void loop() {
         heaterOnTime = currentMillis;
       }
       else if((heaterStatus && humidAverage <= humidDesired - humidHysteresis && currentMillis - heaterOnTime > heaterMinSwitchTime) || (tempAverage > tempHolding + tempHysteresis && heaterStatus))  {
-        // on, dry enough, and have been on long enough, or on and too hot
+        // heater on, dry enough, and have been on long enough, or on and too hot
         digitalWrite(heaterPin, LOW); // heater off
         digitalWrite(ledPin, LOW);
         heaterStatus = false;
@@ -172,7 +171,7 @@ void loop() {
         heaterPercent = 100.0 * a / b;
         heaterOffTime = currentMillis;
       }
-      // update heater fan
+      // update fan
       if(!fanStatus && heaterStatus) {
         // fan off & heater on
         digitalWrite(fanPin,HIGH);
@@ -196,7 +195,7 @@ void loop() {
       break;
     }
 
-    // bootup hysterisis adjust mode
+    // bootup hysterisis adjust mode ///////////////////////////////////////////
     case 3:  {
       digitalWrite(heaterPin, LOW); // heater off
       digitalWrite(ledPin, LOW);
@@ -205,7 +204,7 @@ void loop() {
       fanStatus = false;
       break;
     }
-    //off
+    // off mode ////////////////////////////////////////////////////////////////
     case 4:  {
       digitalWrite(heaterPin, LOW); //heater off
       digitalWrite(ledPin, LOW);
@@ -221,25 +220,31 @@ void loop() {
   }
 }  //enaloop...
 
-//Read Buttons Routine/////////////////////////////////////////////////////
+// Read Buttons Routine /////////////////////////////////////////////////////
+// ...also includes heater and fan state initializations for simplicity
 void readButtons(void)  {
-  if(currentMillis - lastButton > debounce)  {  // debounce
+  if(currentMillis - lastButton > debounce)  {  // debounced?
+    // read 'em
+    bool selectPressed = digitalRead(selectPin);
+    bool upPressed = digitalRead(upPin);
+    bool downPressed = digitalRead(downPin);
+
     // check for bootup mode
     if(bootup)  {
-      if(!digitalRead(selectPin)) mode = 3;
+      if(!selectPressed) mode = 3;
       return;
     }
 
     switch(mode)  {
       // drying mode
       case 0: {
-        if(!digitalRead(selectPin)) {  //select button, abort to holding mode
+        if(!selectPressed) {  // select, go to holding mode
           lastButton = currentMillis;
           dryingFlag = 0; //reset drying flag
           mode = 1;  //holding mode
           break;
         }
-        else if(!digitalRead(upPin)) { //up pushed, increment desired temp
+        else if(!upPressed) { // up, increment desired temp
           lastButton = currentMillis;
           tempDesired = tempDesired + tempIncrement;
           if(tempDesired > maxTemp) {  //stay within range
@@ -247,7 +252,7 @@ void readButtons(void)  {
           }
           break;
         }
-        else if(!digitalRead(downPin))  { //down pushed, decrement desired temp
+        else if(!downPressed)  { // down, decrease desired temp
           lastButton = currentMillis;
           tempDesired = tempDesired - tempIncrement;
           if(tempDesired < minTemp) {  //stay within range
@@ -260,74 +265,73 @@ void readButtons(void)  {
 
       // holding mode
       case 1: {
-        if(!digitalRead(selectPin)) {  //select button, turn off heater and switch to filament select mode
+        if(!selectPressed) {  // select, turn off heater and go to filament select mode
           lastButton = currentMillis;
-          digitalWrite(heaterPin,LOW);  //turn heater off
+          digitalWrite(heaterPin,LOW);  // heater off
           digitalWrite(ledPin,LOW);
           heaterStatus = LOW;
-          mode = 4;  //change to off mode
-          //delay(heaterDelay);  //will this prevent button & lcd glitches without hardware upgrades?
+          mode = 4;  // off mode
           break;
         }
-        else if(!digitalRead(upPin)) { //up button, increment desired humidity
+        else if(!upPressed) { // up, increment desired humidity
           lastButton = currentMillis;
           humidDesired += humidIncrement;
-          if(humidDesired > humidMax)  {  //stay within range
+          if(humidDesired > humidMax)  {  // stay within range
             humidDesired = humidMax;
           }
           break;
         }
-        else if(!digitalRead(downPin))  { //down pushed, decrement desired humidity
+        else if(!downPressed)  { // down, decrement desired humidity
           lastButton = currentMillis;
           humidDesired -= humidIncrement;
-          if(humidDesired < humidMin)  {  //stay within range
+          if(humidDesired < humidMin)  {  // stay within range
             humidDesired = humidMin;
           }
           break;
         }
-        else break;  //no button
+        else break;  // no button
       }
 
-      //filament select mode buttons
+      // filament select mode buttons
       case 2: {
-        if(!digitalRead(selectPin)) {  //select button, switch to drying mode
+        if(!selectPressed) {  // select: store data, turn fan on, & go to drying mode
           lastButton = currentMillis;
-          tempDesired = filamentData[currentFilament][0]; //update temp, time, & humid
+          tempDesired = filamentData[currentFilament][0]; // update temp, time, & humid
           filamentMillis = filamentData[currentFilament][1] * 3600000;
           tempHolding = filamentData[currentFilament][2];
           humidDesired = filamentData[currentFilament][3];
-          mode = 0;  //switch to drying mode
-          digitalWrite(fanPin,HIGH);  //turn fan on
+          mode = 0;  // drying mode
+          digitalWrite(fanPin,HIGH);  // fan on
           fanStatus = true;
           break;
         }
-        else if(!digitalRead(upPin)) { //up pushed, next filament
+        else if(!upPressed) { // up: next filament
           lastButton = currentMillis;
           currentFilament++;
-          if(currentFilament >= filamentCount)  {  //loop around list
+          if(currentFilament >= filamentCount)  {  // loop around list
             currentFilament = 0;
           }
           break;
         }
-        else if(!digitalRead(downPin))  { //down pushed, previous filament
+        else if(!downPressed)  { // down: previous filament
           lastButton = currentMillis;
           currentFilament--;
-          if(currentFilament < 0)  {  //loop around list
+          if(currentFilament < 0)  {  // loop around list
             currentFilament = filamentCount-1;
           }
           break;
         }
-        else break;  //no button
+        else break;  // no button
       }
 
       // bootup temp hysteresis mode
       case 3: {
-        if(!digitalRead(selectPin)) {  // select button, switch to holding mode
+        if(!selectPressed) {  // select: switch to holding mode
           lastButton = currentMillis;
           mode = 4;  // change to off mode
           break;
         }
-        else if(!digitalRead(upPin)) { //up button, increment desired humidity
+        else if(!upPressed) { // up: increment desired humidity
           lastButton = currentMillis;
           tempHysteresis += tempHysteresisIncrement;
           if(tempHysteresis > tempHysteresisMax)  {  //stay within range
@@ -335,50 +339,50 @@ void readButtons(void)  {
           }
           break;
         }
-        else if(!digitalRead(downPin))  { //down pushed, decrement desired humidity
+        else if(!downPressed)  { // down: decrement desired humidity
           lastButton = currentMillis;
           tempHysteresis -= tempHysteresisIncrement;
-          if(tempHysteresis < tempHysteresisMin)  {  //stay within range
+          if(tempHysteresis < tempHysteresisMin)  {  // stay within range
             tempHysteresis = tempHysteresisMin;
           }
           break;
         }
-        else break;  //no button
+        else break;  // no button
       }
 
       //off mode
       case 4: {
-        if(!digitalRead(selectPin)) {  //select button, switch to holding mode
+        if(!selectPressed) {  // select: switch to holding mode
           lastButton = currentMillis;
-          mode = 2;  //change to filament select mode
+          mode = 2;  // change to filament select mode
           break;
         }
-        else break;  //no button
+        else break;  // no button
       }
-    }//end of mode switch
+    }// end of mode switch
     return;
-  }//end of debounced
-  else return;    //Debouncing
+  }// end of debounced
+  else return;    // Debouncing
 }
 
-// update lcd routine /////////////////////////////////////////////////////////
-// AVOID USING lcd.clear(); !!!
+// Update display function ////////////////////////////////////////////////////
+// Rules!!!
+// AVOID USING lcd.clear();
 // print padding assumes humidity <=99%, and temp <=99C
 void updateDisplay(void)  {
+  lastDisplayTime = currentMillis;  // update timer
 
-  lastDisplayTime = currentMillis;  //update timer
-
-  //drying mode
+  // drying mode //////////////////////////////////////////////////////////////
   if(!mode) {
-    unsigned long a = currentMillis - dryStartTime; //elapsed
-    a = filamentMillis - a;  //remaining
+    unsigned long a = currentMillis - dryStartTime; // elapsed time
+    a = filamentMillis - a;  // remaining time
     double hoursRemaining = a/3600000.0;
     lcd.setCursor(0,0);
     //          "1234567890123456";
     //          "eta:X.Xhr RH:XX%"
     lcd.print(F("eta:"));
     if(hoursRemaining<10)  {
-      lcd.print(hoursRemaining,1);  //resolution padding
+      lcd.print(hoursRemaining,1);  // resolution padding
     }
     else  {
       lcd.print(F(" "));
@@ -386,7 +390,7 @@ void updateDisplay(void)  {
     }
     lcd.print(F("hr RH:"));
     if(humidAverage<10) {
-      lcd.print(F(" "));  //padding...
+      lcd.print(F(" "));  // padding...
     }
     lcd.print(humidAverage,0);
     lcd.print(F("%"));
@@ -394,36 +398,36 @@ void updateDisplay(void)  {
     //            "1234567890123456";
     //            "XX.X/XXdC h:XXX%"
     lcd.setCursor(0,1);
-    if(tempAverage<10) { //padding before actual temp...
+    if(tempAverage<10) { // padding before actual temp...
       lcd.print(F(" "));
     }
     lcd.print(tempAverage,1);
     lcd.print(F("/"));
-    if(tempDesired<10) { //padding before desired temp...
+    if(tempDesired<10) { // padding before desired temp...
       lcd.print(F(" "));
     }
     lcd.print(tempDesired,0);
-    lcd.print(char(223)); //degree symbol
+    lcd.print(char(223)); // degree symbol
     lcd.print(F("C h:"));
 
     if(heaterPercent<10) {
-      lcd.print(F("  "));  //padding...
+      lcd.print(F("  "));  // padding...
     }
     else if(heaterPercent<100) {
-      lcd.print(F(" "));  //padding...
+      lcd.print(F(" "));  // padding...
     }
     lcd.print(heaterPercent,0);
     lcd.print(F("%"));
     return;
   }
 
-  //Holding Mode
+  // Holding Mode //////////////////////////////////////////////////////////////
   if(mode ==1) {
     lcd.setCursor(0,0);
     //            "Hold Heater:XXX%"
     //            "1234567890123456"
     lcd.print(F("Hold Heater:"));
-    if(heaterPercent<10) {  //padding
+    if(heaterPercent<10) {  // padding
       lcd.print(F("  "));
     }
     else if(heaterPercent<100) {
@@ -435,26 +439,26 @@ void updateDisplay(void)  {
     //            "XX.XdC  XX.X/XX%"
     //            "1234567890123456";
     lcd.setCursor(0,1);
-    if(tempAverage<10) { //padding before actual temp...
+    if(tempAverage<10) { // padding before actual temp...
       lcd.print(F(" "));
     }
     lcd.print(tempAverage,1);
-    lcd.print(char(223)); //degree symbol
+    lcd.print(char(223)); // degree symbol
     lcd.print(F("C  "));
     if(humidAverage<10) {
-      lcd.print(F(" "));  //padding...
+      lcd.print(F(" "));  // padding...
     }
     lcd.print(humidAverage,1);
     lcd.print(F("/"));
     if(humidDesired<10) {
-      lcd.print(F(" "));  //padding...
+      lcd.print(F(" "));  // padding...
     }
     lcd.print(humidDesired,0);
     lcd.print(F("%"));
     return;
   }
 
-  //Filament Select Mode
+  // Filament Select Mode /////////////////////////////////////////////////////
   if(mode == 2) {
     lcd.setCursor(0,0);
     //         ("1234567890123456");
@@ -465,17 +469,17 @@ void updateDisplay(void)  {
     //          "T:XXdC ETA:XXhrs"
     lcd.print(F("T:"));
     lcd.print(filamentData[currentFilament][0],0);
-    lcd.print(char(223)); //degree symbol
+    lcd.print(char(223)); // degree symbol
     lcd.print(F("C ETA:"));
     if(filamentData[currentFilament][1]<10) {
-      lcd.print(F(" "));  //padding...
+      lcd.print(F(" "));  // padding...
     }
     lcd.print(filamentData[currentFilament][1],0);
     lcd.print(F("hrs"));
     return;
   }
 
-  //Bootup Mode
+  // Bootup Mode
   if(mode == 3) {
     lcd.setCursor(0,0);
     //         ("1234567890123456");
@@ -484,12 +488,12 @@ void updateDisplay(void)  {
     //         ("1234567890123456");
     lcd.print(F("   +/- "));
     lcd.print(tempHysteresis,1);
-    lcd.print(char(223)); //degree symbol
+    lcd.print(char(223)); // degree symbol
     lcd.print(F("C    "));
     return;
   }
 
-  //Off Mode
+  // Off Mode /////////////////////////////////////////////////////////////////
   if(mode == 4) {
     lcd.setCursor(0,0);
     //         ("1234567890123456");
@@ -513,7 +517,7 @@ void updateDisplay(void)  {
     lcd.print(F("%"));
     return;
   }
-  return;  //this shouldn't ever happen
+  return;  // this shouldn't ever happen
 }
 
 // Update temperature average (non-blocking) //////////////////////////////////
@@ -529,11 +533,11 @@ void readDallasTemp(void)  {
      case 1: {// bypass until temp conversion is ready
      if (currentMillis - dallasReadTime >= dallasPeriod) { // done waiting if true
          i++;
-         if(i >= dallasBufferSize) {  //restart buffer if it's full
+         if(i >= dallasBufferSize) {  // restart buffer if it's full
            i=0;
          }
-         tempArray[i] = dallas.getTempC(dallasAddress); //store new temp value (*note, a float is recast to double)
-         tempAverage = 0;  //calc new average temp...
+         tempArray[i] = dallas.getTempC(dallasAddress); // store new temp value (*note, a float is recast to double)
+         tempAverage = 0;  // calc new average temp...
          for(int k = 0; k < dallasBufferSize; k++) {
            tempAverage += tempArray[k];
          }
@@ -548,7 +552,7 @@ void readDallasTemp(void)  {
 
 // Update DHT humidity average (non-blocking) //////////////////////////////////
 void readDHT(void)  {
-  if(currentMillis - dhtReadTime < dhtPeriod) return; //return early if it's not yet time
+  if(currentMillis - dhtReadTime < dhtPeriod) return; // return early if it's not yet time
   double humidA = dht.readHumidity();        // RH %
   #ifndef dallasSensorEnabled
     double tempA =  dht.readTemperature();
@@ -556,10 +560,10 @@ void readDHT(void)  {
   dhtReadTime = currentMillis;
   bool haveNAN = 0;
   #ifdef dallasSensorEnabled
-    if(isnan(humidA)) haveNAN = 1;// Drop the reading if we get any NAN's  //testing a trick here
+    if(isnan(humidA)) haveNAN = 1; // Drop the reading if we get any NAN's
   #endif
   #ifndef dallasSensorEnabled
-    if(isnan(humidA) || isnan(tempA)) haveNAN = 1;// Drop the reading(s) if we get any NAN's  //testing a trick here
+    if(isnan(humidA) || isnan(tempA)) haveNAN = 1; // Drop the reading(s) if we get any NAN's
   #endif
   if(haveNAN) {
       dhtRetries ++;
@@ -587,7 +591,7 @@ void readDHT(void)  {
     #endif
     humidAverage = humidAverage / dhtBufferSize;
     j++;
-    if(j >= dhtBufferSize) j=0;  //reset index if needed
+    if(j >= dhtBufferSize) j=0;  // reset index if needed
     return;
   }
 }

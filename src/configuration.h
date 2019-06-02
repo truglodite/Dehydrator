@@ -48,7 +48,7 @@
 #define dallasBufferSize 3 //number of temperature readings to store for averaging (1 = disable averaging, more uses memory)
 #define dallasPeriod 800  //millis required before a requested temp is used (>760 for 12bit)
 
-#define heaterMinSwitchTime 5000 //the heater will not be on or off for shorter than this many millis
+#define heaterMinSwitchTime 5000 // the heater will not be on or off for shorter than this many millis
 #define heaterFanDelay 15000 //millis to leave the fan on after heater turns off in holding mode
 #define heaterDelay 500  //millis pause button readings after turning on/off heater. This may prevent glitches from transient spikes.
 
