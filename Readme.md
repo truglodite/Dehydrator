@@ -49,7 +49,7 @@ Since DHT sensors are prone to errors, this code implements an "NAN" value check
 
 * Warning: Mains Voltage Work Required!!!
 
-Hacking a dehydrator requires you to be familiar with best practices while working around and designing high voltage devices. As such, this is not a suitable build for a non-skilled electrician... ie if you burn your house down or electrocute yourself by building and/or operating a dehydrator, you're on your own. ;)
+Hacking a dehydrator requires you to be familiar with best practices while working around and designing high voltage devices. As such, this is not a suitable build for a non-skilled electrician... ie if you burn your house down or electrocute yourself using any ideas from this project, you're on your own. ;)
 
 * HV wiring
 
