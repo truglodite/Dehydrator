@@ -20,9 +20,9 @@
 
 // Preferences ///////////////////////////////////////////////
 #define dallasSensorEnabled//comment out to use DHTXX for temperature instead
-#define debounce     500  //button debounce/repeat delay (millis)
-#define splashTime   3000 //millis to show splash screen (give enough time to release bootup buttons)
-#define displayPeriod 200  //millis to show display (antiflicker... <debounce)
+#define debounce     350  //button debounce/repeat delay (millis)
+#define splashTime   2000 //millis to show splash screen (give enough time to release bootup buttons)
+#define displayPeriod 200  //millis to show display (antiflicker... <debounce!)
 
 #define defaultTemp  45   //default desired Celsius setting (45)
 #define defaultTempHolding 35
@@ -50,7 +50,7 @@
 
 #define heaterMinSwitchTime 5000 //the heater will not be on or off for shorter than this many millis
 #define heaterFanDelay 15000 //millis to leave the fan on after heater turns off in holding mode
-#define heaterDelay 1000  //millis, a short pause after turning on/off heater. This may prevent glitches from voltage spikes.
+#define heaterDelay 500  //millis pause button readings after turning on/off heater. This may prevent glitches from transient spikes.
 
 // Filament Tables ////////////////////////////////////////////////
 // Copied from PrintDry.com
