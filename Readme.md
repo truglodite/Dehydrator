@@ -27,7 +27,7 @@ An Arduino based adjustable precision bang bang relay controller for food dehydr
 - 3@ 6x6x6mm N.O. toggle buttons
 - 3@ 4k7ohm resistors (button pullups)
 - 5VDC supply (USB, wallwart, or similar)
-- 0.1uF+100ohm RC snubber (Kemet P409CE104M275H101)
+- 0.1uF+100ohm RC snubber ([Kemet P409CE104M275H101](https://www.mouser.com/datasheet/2/212/KEM_F3089_P409_X2_275-1103726.pdf))
 - LED + limiting resistor (heater on indicator)
 
 ## Operation
