@@ -1,7 +1,7 @@
 # Dehydrator
 An Arduino based adjustable precision bang bang relay controller for food dehydrators.
 
-<img src="https://cdn.thingiverse.com/renders/fa/e7/e0/af/d5/63c64e5bdb93b1421403e6982178a298_preview_featured.jpg" width="900">
+<img src="https://cdn.thingiverse.com/renders/fa/e7/e0/af/d5/63c64e5bdb93b1421403e6982178a298_preview_featured.jpg" width="600">
 
 ## 3D Printed Controller & Relay Enclosures
 - *Presto 6302*: https://www.thingiverse.com/thing:2853628
