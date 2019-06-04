@@ -37,8 +37,7 @@ In filament select mode, the heater will remain off, while the LCD displays the 
 
 While in drying mode the heater is hysteresis controlled to maintain the desired temperature for the configured elapsed time. The LCD displays hours until dry (eta), relative humidity %, actual/desired temp, and heater duty cycle %. The fan remains on always in drying mode. During dry mode, up/down will adjust the desired temperature, and select will switch to holding mode. If the timer counts to zero the code goes to holding mode.
 
-In to holding mode, which toggles the heater on/off using +/- hysteresis to maintain the set humidity level. In holding mode, the LCD displays "Hold", heating %,
-actual temp, and actual/desired humidity. The fan turns on when the heater is turned on, and it turns off a few seconds after heater turns off. During holding mode, the up/down buttons adjust the desired humidity %, and the select button will go to off mode. A safety check ensures the selected filament holding temperature is not exceeded in holding mode regardless of humidity values.
+Holding mode toggles the heater on/off using +/- hysteresis to maintain the set humidity level. The LCD displays "Hold", heating %, actual temp, and actual/desired humidity. The fan turns on when the heater is turned on, and it turns off a few seconds after heater turns off. The up/down buttons adjust the desired humidity %, and the select button will go to off mode. A safety check ensures the selected filament holding temperature is not exceeded in holding mode regardless of humidity values.
 
 In all modes, an LED toggles on/off to indicate power going to the heater. On displays that show heater %, heater % is calculated as (on time)/(on time + off time). This percentage is updated each time the heater is turned either on or off.
 
