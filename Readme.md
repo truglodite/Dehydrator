@@ -39,7 +39,7 @@ While in drying mode the heater is hysteresis controlled to maintain the desired
 
 Holding mode toggles the heater on/off using +/- hysteresis to maintain the set humidity level. The LCD displays "Hold", heating %, actual temp, and actual/desired humidity. The fan turns on when the heater is turned on, and it turns off a few seconds after heater turns off. The up/down buttons adjust the desired humidity %, and the select button will go to off mode. A safety check ensures the selected filament holding temperature is not exceeded in holding mode regardless of humidity values.
 
-In all modes, an LED toggles on/off to indicate power going to the heater. On displays that show heater %, heater % is calculated as (on time)/(on time + off time). This percentage is updated each time the heater is turned either on or off.
+In all modes, an LED toggles on/off to indicate that the heater relay is ON. Some display modes show heater %. It is calculated as (on time)/(on time + off time). This percentage is updated each time the heater is turned either on or off.
 
 ### Adjusting Hysteresis (runtime)
 During bootup, if select is held until the splash screen, the code will enter temperature hysteresis adjust mode. In this mode you can use up/down to modify the hysteresis used in dry mode. When done, push select to go to off mode. The modified hysteresis will persist until reboot.
