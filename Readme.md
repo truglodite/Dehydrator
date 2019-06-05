@@ -27,7 +27,7 @@ An Arduino based adjustable precision bang bang relay controller for food dehydr
 - 3@ 6x6x6mm N.O. toggle buttons
 - 3@ 4k7ohm resistors (button pullups)
 - 5VDC supply (USB, wallwart, or similar)
-- 0.22uF+220ohm RC snubber (Kemet P409CE224M275AH221 or similar)
+- 0.22uF+220ohm RC snubber (Kemet P409CP224M275AH221 or similar)
 - LED + limiting resistor (heater on indicator)
 
 ## Operation
@@ -67,7 +67,7 @@ Most appliances with mains powered appliances with heaters have a thermal fuse i
 
 * RC snubber
 
-For the Presto brand dehydrator used by the author of this code, and likely other brands as well, motor off switching transients result in occasional 'phantom button press' when the fan shut off. The behavior was verified with an o-scope, and an appropriate solution was tested; a 0.22uF+220ohm RC snubber in parallel to the motor wires. It is preferable to use a purpose built snubber device like the [Kemet P409CE224M275AH221](url) for safety. Install it as close to the motor as reasonably possible. Accessing the motor on the author's Presto brand dehydrator was impossible without first removing the impeller and destroying it in the process. Instead, connecting the snubber in the relay/junction box was good enough to fix the problem.
+For the Presto brand dehydrator used by the author of this code, and likely other brands as well, motor off switching transients result in occasional 'phantom button press' when the fan shut off. The behavior was verified with an o-scope, and an appropriate solution was tested; a 0.22uF+220ohm RC snubber in parallel to the motor wires. It is preferable to use a purpose built snubber device like the [Kemet P409CP224M275AH221](url) for safety. Install it as close to the motor as reasonably possible. Accessing the motor on the author's Presto brand dehydrator was impossible without first removing the impeller and destroying it in the process. Instead, connecting the snubber in the relay/junction box was good enough to fix the problem.
 
 ## Installation
 
