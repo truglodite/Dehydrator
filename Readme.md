@@ -67,7 +67,11 @@ Most appliances with mains powered appliances with heaters have a thermal fuse i
 
 * RC snubber
 
+<<<<<<< HEAD
 For the Presto brand dehydrator used by the author of this code, and likely other brands as well, motor off switching transients resulted in occasional 'phantom button press' when the fan shut off. The behavior was verified with an o-scope, and an appropriate solution was tested; a 0.22uF+220ohm RC snubber in parallel to the motor wires. For safety it is preferable to use a purpose built snubber device like the [Kemet P409CP224M275AH221](https://www.mouser.com/datasheet/2/212/KEM_F3089_P409_X2_275-1103726.pdf). Install the snubber as close to the motor as reasonably possible. Accessing the motor on the author's Presto brand dehydrator was impossible without first removing the impeller (and destroying it in the process). Instead, connecting the snubber in a relay/junction box located ~18" from the motor was good enough to fix the problem.
+=======
+For the Presto brand dehydrator used by the author of this code, and likely other brands as well, motor off switching transients result in an occasional 'phantom button press' as the fan shuts off. The behavior was analyzed on an o-scope, which showed the phantom buttons occured when the relay contacts were arcing while opening. An appropriate solution was researched and tested; a 0.22uF+220ohm RC snubber in parallel to the motor wires. It is preferable to use a purpose built snubber device like the [Kemet P409CP224M275AH221](https://www.mouser.com/datasheet/2/212/KEM_F3089_P409_X2_275-1103726.pdf) for safety. Install it as close to the motor as reasonably possible. Accessing the motor on the author's Presto brand dehydrator was impossible without first removing the impeller and destroying it in the process. Instead, connecting the snubber in the relay/junction box was good enough to fix the problem.
+>>>>>>> 24765e6261f8730fe2ff7abfa8fd7089e6fe45ff
 
 ## Installation
 
