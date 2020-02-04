@@ -40,7 +40,7 @@
 #define humidMin     0
 #define humidHysteresis 1 //% hysteresis for holding mode
 #define dhtBufferSize 2   //
-#define dhtType      DHT11 // DHT22, DHT11, etc...
+#define dhtType      DHT22 // DHT22, DHT11, etc...
 #define dhtPeriod    2000 //millis between dht readings
 #define dhtRetriesMax 5   //# of consecutive DHT NAN's before soft reset
 
